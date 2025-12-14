@@ -1,0 +1,6 @@
+Best Rock Hits 2025
+SONG|English|Bohemian Rhapsody|Queen|354|ROCK
+INST|Piano|Clair de Lune|Claude Debussy|305|CLASSICAL
+SONG|English|Shape of You|Ed Sheeran|233|POP
+INST|Violin|Explosive|Bond|210|ELECTRONIC
+SONG|English|Smells Like Teen Spirit|Nirvana|301|ROCK

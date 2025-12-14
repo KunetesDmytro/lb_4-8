@@ -12,7 +12,6 @@ public class DeleteSavedDiscsCommand implements Command {
 
     @Override
     public void execute(Scanner scanner) {
-        // Викликаємо метод сервісу для видалення
         system.deleteSavedData();
     }
 }

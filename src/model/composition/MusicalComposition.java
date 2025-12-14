@@ -3,7 +3,7 @@ package model.composition;
 public abstract class MusicalComposition {
     private String title;
     private String artist;
-    private int durationSeconds; // Тривалість у секундах
+    private int durationSeconds;
     private MusicStyle style;
 
     public MusicalComposition(String title, String artist, int durationSeconds, MusicStyle style) {
@@ -18,10 +18,8 @@ public abstract class MusicalComposition {
     public int getDurationSeconds() { return durationSeconds; }
     public MusicStyle getStyle() { return style; }
 
-    // Абстрактний метод для отримання детального опису
     public abstract String toString();
 
-    // Форматування часу (допоміжний метод)
     protected String getFormattedDuration() {
         int min = durationSeconds / 60;
         int sec = durationSeconds % 60;

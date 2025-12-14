@@ -4,10 +4,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // Ініціалізація системи з файлом збереження "my_disc.txt"
-        DiscProcessingSystem system = new DiscProcessingSystem("my_disc.txt");
-
-        system.loadDisc();
+        DiscProcessingSystem system = new DiscProcessingSystem("music_storage.txt");
 
         MenuInvoker menuInvoker = new MenuInvoker(system);
         Scanner input = new Scanner(System.in);

@@ -16,7 +16,7 @@ public class ConsoleHelper {
             scanner.next();
         }
         int val = scanner.nextInt();
-        scanner.nextLine(); // consume newline
+        scanner.nextLine();
         return val;
     }
 

@@ -2,7 +2,13 @@ package service;
 
 import model.MusicDisc;
 import model.composition.*;
+import model.composition.MusicalComposition;
+import model.composition.Song;
+import model.composition.InstrumentalTrack;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -13,9 +19,11 @@ public class DiscProcessingSystem {
 
     public DiscProcessingSystem(String fileName) {
         this.fileName = fileName;
-        // За замовчуванням створюємо порожній диск
-        this.currentDisc = new MusicDisc("New Collection");
+        this.currentDisc = new MusicDisc("Default Disc");
+        loadDisc();
     }
+
+
 
     public MusicDisc getCurrentDisc() { return currentDisc; }
 
@@ -64,7 +72,7 @@ public class DiscProcessingSystem {
 
     public void saveCurrentDisc() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(fileName, StandardCharsets.UTF_8))) {
-            writer.println(currentDisc.getDiscName()); // Перший рядок - назва диска
+            writer.println(currentDisc.getDiscName());
             for (MusicalComposition track : currentDisc.getTrackList()) {
                 StringBuilder sb = new StringBuilder();
                 // TYPE|TITLE|ARTIST|DURATION|STYLE|EXTRA
@@ -87,43 +95,6 @@ public class DiscProcessingSystem {
         }
     }
 
-    public void loadDisc() {
-        File file = new File(fileName);
-        if (!file.exists()) {
-            System.out.println("File not found. Creating new empty disc.");
-            createNewDisc("New Disc");
-            return;
-        }
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            String discName = reader.readLine();
-            if (discName == null) discName = "Imported Disc";
-            this.currentDisc = new MusicDisc(discName);
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split("\\|");
-                if (parts.length < 6) continue;
-
-                String type = parts[0];
-                String extra = parts[1]; // Lang or Instrument
-                String title = parts[2];
-                String artist = parts[3];
-                int duration = Integer.parseInt(parts[4]);
-                MusicStyle style = MusicStyle.valueOf(parts[5]);
-
-                if (type.equals("SONG")) {
-                    currentDisc.addTrack(new Song(title, artist, duration, style, extra));
-                } else if (type.equals("INST")) {
-                    currentDisc.addTrack(new InstrumentalTrack(title, artist, duration, style, extra));
-                }
-            }
-            System.out.println("Disc loaded successfully.");
-        } catch (IOException | NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error loading file: " + e.getMessage());
-        }
-    }
-
     public void deleteSavedData() {
         File file = new File(fileName);
         if (file.delete()) {
@@ -141,5 +112,53 @@ public class DiscProcessingSystem {
 
     private String formatDuration(int totalSeconds) {
         return (totalSeconds / 60) + " min " + (totalSeconds % 60) + " sec";
+    }
+    public void loadDisc() {
+        File file = new File(fileName);
+
+        if (!file.exists()) {
+            System.out.println("File not found. Creating new empty disc.");
+            this.currentDisc = new MusicDisc("Default New Disc");
+            return;
+        }
+
+        System.out.println("EXECUTING: (loading disc from file " + fileName + "...)");
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+
+            String discName = reader.readLine();
+            if (discName == null || discName.trim().isEmpty()) {
+                discName = "Imported Disc";
+            }
+
+            this.currentDisc = new MusicDisc(discName.trim());
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split("\\|");
+
+                if (parts.length < 6) continue;
+
+                String type = parts[0].trim();
+                String extra = parts[1].trim();
+                String title = parts[2].trim();
+                String artist = parts[3].trim();
+                int duration = Integer.parseInt(parts[4].trim());
+                MusicStyle style = MusicStyle.valueOf(parts[5].trim());
+
+                if (type.equals("SONG")) {
+                    currentDisc.addTrack(new Song(title, artist, duration, style, extra));
+                } else if (type.equals("INST")) {
+                    currentDisc.addTrack(new InstrumentalTrack(title, artist, duration, style, extra));
+                }
+            }
+            System.out.println("Disc '" + discName + "' loaded successfully.");
+
+        } catch (IOException | NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            System.out.println("Error loading file: " + e.getMessage());
+            if (this.currentDisc == null) {
+                this.currentDisc = new MusicDisc("Error Recovered Disc");
+            }
+        }
     }
 }
