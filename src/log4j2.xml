@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+
+        <RollingFile name="FileAppender"
+                     fileName="logs/music-disc.log"
+                     filePattern="logs/music-disc-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+            </Policies>
+        </RollingFile>
+
+        <SMTP name="EmailAppender"
+              subject="[Music Disc Project] Critical Error Alert!"
+              to="zombik2045@gmail.com"
+              from="zombik2045@gmail.com"
+              smtpHost="smtp.gmail.com"
+              smtpPort="465"
+              smtpProtocol="smtps"
+              smtpUsername="zombik2045@gmail.com"
+              smtpPassword="-"
+              bufferSize="1">
+            <Property name="mail.smtps.auth">true</Property>
+            <Property name="mail.smtps.ssl.enable">true</Property>
+            <Property name="mail.smtps.ssl.trust">smtp.gmail.com</Property>
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c - %m%n</Pattern>
+            </PatternLayout>
+        </SMTP>
+    </Appenders>
+
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+            <AppenderRef ref="EmailAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
